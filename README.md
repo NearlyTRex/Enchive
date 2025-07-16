@@ -11,7 +11,7 @@ Supported platforms: Linux, BSD, macOS, Windows
 The name is a portmanteau of "encrypt" and "archive," pronounced
 en'kīv.
 
-Files are secured with ChaCha20, Curve25519, and HMAC-SHA256.
+Files are secured with ChaCha8, Curve25519, and HMAC-SHA256.
 
 Manual page: [`enchive(1)`](http://nullprogram.com/enchive/)
 
@@ -145,7 +145,7 @@ derived on different occasions by Diffie-Hellman between the same key
 pair. Enchive generates a random ephemeral key pair each time a file
 is encrypted, so the IV is unnecessary.
 
-Since ChaCha20 requires an IV regardless, Enchive simply uses the hash
+Since ChaCha8 requires an IV regardless, Enchive simply uses the hash
 of the key. This has the additional effect of allowing the client to
 verify its symmetric key before beginning decryption. Otherwise a
 wrong key would only be detected by the MAC after decryption has
@@ -175,21 +175,21 @@ The process for encrypting a file:
    key to produce a shared secret.
 3. SHA-256 hash the shared secret to generate a 64-bit IV.
 4. Add the format number to the first byte of the IV.
-5. Initialize ChaCha20 with the shared secret as the key.
+5. Initialize ChaCha8 with the shared secret as the key.
 6. Write the 8-byte IV.
 7. Write the 32-byte ephemeral public key.
-8. Encrypt the file with ChaCha20 and write the ciphertext.
+8. Encrypt the file with ChaCha8 and write the ciphertext.
 9. Write `HMAC(key, plaintext)`.
 
 The process for decrypting a file:
 
-1. Read the 8-byte ChaCha20 IV.
+1. Read the 8-byte ChaCha8 IV.
 2. Read the 32-byte ephemeral public key.
 3. Perform a Curve25519 Diffie-Hellman key exchange with the ephemeral
    public key.
 4. Validate the IV against the shared secret hash and format version.
-5. Initialize ChaCha20 with the shared secret as the key.
-6. Decrypt the ciphertext using ChaCha20.
+5. Initialize ChaCha8 with the shared secret as the key.
+6. Decrypt the ciphertext using ChaCha8.
 7. Verify `HMAC(key, plaintext)`.
 
 ## Key derivation algorithm
